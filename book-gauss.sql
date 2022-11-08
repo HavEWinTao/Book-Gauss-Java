@@ -1,13 +1,10 @@
 create database book owner fantastic;
 
-\
-c book
-
-create schema book owner fantastic;
-
 -- 以上在命令行中以omm用户执行
 
 -- 以下在data studio中以fantastic用户执行
+create schema book;
+
 set search_path to book;
 
 create table SPRING_SESSION
@@ -78,10 +75,10 @@ create table u_user
     phone     varchar(30)  null
 );
 
-insert into u_user
+insert into u_user(user_name,password,age,sex,phone)
 values
-    (1, 'admin', '$2a$10$M9n/9O5qXuqtjup4jm3Oz.qj393pQ2eR/fS6/Amkf/MqbxgmjE9/K', 18, '男', '13122223333'),
-    (2, 'bob', '$2a$10$FRuiYpdeF.AY98Q0GVJuE.hnYWc/a0K7aJN1LGXDHc.0ewyUSc7I6', 22, '女', '15933334444');
+    ('admin', '$2a$10$M9n/9O5qXuqtjup4jm3Oz.qj393pQ2eR/fS6/Amkf/MqbxgmjE9/K', 18, '男', '13122223333'),
+    ('bob', '$2a$10$FRuiYpdeF.AY98Q0GVJuE.hnYWc/a0K7aJN1LGXDHc.0ewyUSc7I6', 22, '女', '15933334444');
 
 create table borrow_info
 (
@@ -110,6 +107,18 @@ create table user_log
     role_name   varchar(50)  null
 );
 
+-- role
+create table r_role
+(
+    role_id   tinyint primary key,
+    role_name varchar(50) null
+);
+
+insert into r_role
+values
+    (1, '管理员（全部操作）'),
+    (2, '普通用户（仅查看）');
+
 CREATE
 SEQUENCE sq_user_role_id
  START
@@ -125,12 +134,6 @@ create table user_role
     role_id tinyint  not null
 );
 
--- user_role
-insert into user_role
-values
-    (1, 1, 1),
-    (2, 2, 2);
-
 alter table user_role
     add foreign key (user_id)
         references u_user (user_id);
@@ -138,18 +141,12 @@ alter table user_role
 alter table user_role
     add foreign key (role_id)
         references r_role (role_id);
-
--- role
-create table r_role
-(
-    role_id   tinyint primary key,
-    role_name varchar(50) null
-);
-
-insert into r_role
+        
+-- user_role
+insert into user_role(user_id,role_id)
 values
-    (1, '管理员（全部操作）'),
-    (2, '普通用户（仅查看）');
+    (1, 1),
+    (2, 2);
 
 -- privilege
 create table privilege

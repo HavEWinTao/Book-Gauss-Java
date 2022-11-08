@@ -73,7 +73,11 @@ public class BookController {
     @DeleteMapping("/{id}")
     public ResultBody deleteBook(@PathVariable("id") Integer id) {
         UserUtils.checkPrivilege(Privilege.PRI_EDIT, "用户无权限修改数据");
-        bookService.removeById(id);
+        //会自动拦截异常
+        boolean flag = bookService.removeById(id);
+        if (!flag){
+            throw new BasicException(400,"存在用户借阅该图书");
+        }
         return ResultBody.success("删除图书成功");
     }
 
